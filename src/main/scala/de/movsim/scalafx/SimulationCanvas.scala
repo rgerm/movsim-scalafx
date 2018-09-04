@@ -1,6 +1,6 @@
 package de.movsim.scalafx
 
-import java.awt.geom.{AffineTransform, GeneralPath, Path2D}
+import java.awt.geom.{GeneralPath, Path2D}
 import java.awt.{BasicStroke, Color}
 import java.util.Properties
 
@@ -35,20 +35,15 @@ class SimulationCanvas(w : Int, h : Int, properties : Properties) extends Canvas
   private val clipPath = new GeneralPath((Path2D.WIND_EVEN_ODD))
   private val vehiclePath = new GeneralPath()
 
-  var transform = new AffineTransform
   setTransformObj()
 
   def setTransformObj(): Unit = {
-    transform.setToIdentity()
-    transform.scale(scale, scale)
-    transform.translate(xOffset, yOffset)
-    g.transform(transform)
+    gc.scale(scale, scale);
+    gc.translate(xOffset, yOffset)
   }
 
   def setTranslateObj(): Unit = {
-    transform.setToIdentity()
-    transform.translate(xOffset, yOffset)
-    g.transform(transform)
+    gc.translate(xOffset, yOffset)
   }
 
   override def updateDrawing(simulationTime: Double): Unit = {
@@ -86,14 +81,15 @@ class SimulationCanvas(w : Int, h : Int, properties : Properties) extends Canvas
     // draw vehicle polygon at new position
     val polygon = roadMapping.mapFloat(vehicle)
 
-    vehiclePath.reset()
-    vehiclePath.moveTo(polygon.getXPoint(0), polygon.getYPoint(0))
-    vehiclePath.lineTo(polygon.getXPoint(1), polygon.getYPoint(1))
-    vehiclePath.lineTo(polygon.getXPoint(2), polygon.getYPoint(2))
-    vehiclePath.lineTo(polygon.getXPoint(3), polygon.getYPoint(3))
-    vehiclePath.closePath()
-    g.setPaint(vehicleColor(vehicle, simulationTime))
-    g.fill(vehiclePath)
+    gc.beginPath()
+    gc.moveTo(polygon.getXPoint(0), polygon.getYPoint(0))
+    gc.lineTo(polygon.getXPoint(1), polygon.getYPoint(1))
+    gc.lineTo(polygon.getXPoint(2), polygon.getYPoint(2))
+    gc.lineTo(polygon.getXPoint(3), polygon.getYPoint(3))
+    gc.closePath()
+    gc.setFill(javafx.scene.paint.Color.BLUE)
+    gc.fill()
+
     if (vehicle.isBrakeLightOn) {
       vehiclePath.reset()
       // points 2 & 3 are at the rear of vehicle
