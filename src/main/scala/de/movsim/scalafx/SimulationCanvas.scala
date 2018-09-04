@@ -29,9 +29,9 @@ class SimulationCanvas(w : Int, h : Int, properties : Properties) extends Canvas
 
   roadNetwork.forEach(roadSegment => roadSegment.roadMapping().setRoadColor(-8355712))
   private val brakeLightColor = Color.RED
-  var scale = 2 //properties.getProperty("initialScale").toDouble
+  var scale = 0.7071 //properties.getProperty("initialScale").toDouble
   var xOffset = 10 //properties.getProperty("xOffset").toInt
-  var yOffset = 1000 //properties.getProperty("yOffset").toInt
+  var yOffset = 100 //properties.getProperty("yOffset").toInt
   private val clipPath = new GeneralPath((Path2D.WIND_EVEN_ODD))
   private val vehiclePath = new GeneralPath()
 
@@ -41,6 +41,12 @@ class SimulationCanvas(w : Int, h : Int, properties : Properties) extends Canvas
   def setTransformObj(): Unit = {
     transform.setToIdentity()
     transform.scale(scale, scale)
+    transform.translate(xOffset, yOffset)
+    g.transform(transform)
+  }
+
+  def setTranslateObj(): Unit = {
+    transform.setToIdentity()
     transform.translate(xOffset, yOffset)
     g.transform(transform)
   }

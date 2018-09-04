@@ -11,6 +11,10 @@ import scalafx.scene.{Group, Scene}
 object Viewer extends JFXApp {
   val projectMetaData: ProjectMetaData = ProjectMetaData.getInstance()
   var properties : Properties = null
+  var xOffsetSave : Int = 0
+  var yOffsetSave : Int = 0
+  var startDragX : Int = 0
+  var startDragY : Int = 0
 
   override def main(args: Array[String]): Unit = {
     var properties : Properties = new Properties()
@@ -22,22 +26,40 @@ object Viewer extends JFXApp {
     super.main(args)
   }
 
+  private val canvas = new SimulationCanvas(1000, 800, properties)
   stage = new PrimaryStage {
     title = "Movsim"
     scene = new Scene(1000,800) {
       root = new Group {
-        children = List(new SimulationCanvas(1000, 800, properties))
+
+        children = List(canvas)
       }
     }
     onCloseRequest = {
-      new javafx.event.EventHandler[javafx.stage.WindowEvent] {
-        def handle(ev: javafx.stage.WindowEvent): Unit = {
-          Platform.exit()
-          System.exit(0)
-        }
+      (ev: javafx.stage.WindowEvent) => {
+        Platform.exit()
+        System.exit(0)
       }
     }
   }
-
+  canvas.onMousePressed = {
+    (e) => {
+      startDragX = e.getX.toInt
+      startDragY = e.getY.toInt
+      xOffsetSave = canvas.xOffset
+      yOffsetSave = canvas.yOffset
+    }
+  }
+  canvas.onMouseReleased = {
+    (e) => {
+      val xOffsetNew : Int = xOffsetSave + ((e.getX - startDragX) / canvas.scale).toInt
+      val yOffsetNew : Int = yOffsetSave + ((e.getY - startDragY) / canvas.scale).toInt
+      if ((xOffsetNew != canvas.xOffset) || (yOffsetNew != canvas.yOffset)) {
+        canvas.xOffset = xOffsetNew
+        canvas.yOffset = yOffsetNew
+        canvas.setTranslateObj()
+      }
+    }
+  }
 
 }
