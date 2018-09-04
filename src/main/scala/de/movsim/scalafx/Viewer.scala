@@ -4,8 +4,8 @@ import java.util.Properties
 
 import org.movsim.input.{MovsimCommandLine, ProjectMetaData}
 import org.movsim.logging.Logger
-import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
+import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.{Group, Scene}
 
 object Viewer extends JFXApp {
@@ -27,6 +27,14 @@ object Viewer extends JFXApp {
     scene = new Scene(1000,800) {
       root = new Group {
         children = List(new SimulationCanvas(1000, 800, properties))
+      }
+    }
+    onCloseRequest = {
+      new javafx.event.EventHandler[javafx.stage.WindowEvent] {
+        def handle(ev: javafx.stage.WindowEvent): Unit = {
+          Platform.exit()
+          System.exit(0)
+        }
       }
     }
   }
