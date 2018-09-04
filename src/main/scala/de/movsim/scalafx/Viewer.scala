@@ -3,6 +3,7 @@ package de.movsim.scalafx
 import java.util.Properties
 
 import org.movsim.input.{MovsimCommandLine, ProjectMetaData}
+import org.movsim.logging.Logger
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.{Group, Scene}
@@ -14,6 +15,7 @@ object Viewer extends JFXApp {
   override def main(args: Array[String]): Unit = {
     var properties : Properties = new Properties()
     val projectMetaData: ProjectMetaData = ProjectMetaData.getInstance
+    Logger.initializeLogger()
     MovsimCommandLine.parse(args)
     properties = ViewConfig.loadProperties(projectMetaData)
     this.properties = properties
